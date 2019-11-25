@@ -1,0 +1,113 @@
+<h3 class="card-title">個人資料</h3>
+
+<form [formGroup]="editProfileForm" (ngSubmit)="editProfile(editProfileForm)" novalidate *ngIf="userdata">                  
+  <div class="form-group">
+    <label for="lastname">姓氏</label>
+    <input class="form-control" name="lastname" type="text" id="lastname" formControlName="lastname">
+  </div>
+
+  <div *ngIf="!editProfileForm.controls.lastname.valid && !editProfileForm.controls.lastname.pristine" class="alert alert-danger">
+      <div *ngIf="editProfileForm.controls.lastname.hasError('required')">
+          請輸入你的姓氏
+      </div>
+      <div *ngIf="editProfileForm.controls.lastname.hasError('maxlength')">
+          姓氏至多10個字
+      </div>
+  </div>
+
+  <div class="form-group">
+    <label for="firstname">名字</label>
+    <input class="form-control" name="firstname" type="text" id="firstname" formControlName="firstname">
+  </div>
+
+  <div *ngIf="!editProfileForm.controls.firstname.valid && !editProfileForm.controls.firstname.pristine" class="alert alert-danger">
+    <div *ngIf="editProfileForm.controls.firstname.hasError('required')">
+        請輸入你的姓名
+    </div>
+    <div *ngIf="editProfileForm.controls.firstname.hasError('maxlength')">
+        姓名至多10個字
+    </div>
+  </div>
+
+  <div class="form-group">
+      <label for="gender">性別</label>
+        <label class="c-input c-radio">
+        <input id="male" name="gender" onclick="javascript: return false;" type="radio" value="1" formControlName="gender">
+        <span class="c-indicator"></span>
+        男
+        </label>
+        <label class="c-input c-radio">
+        <input id="female" name="gender" onclick="javascript: return false;" type="radio" value="0" formControlName="gender">
+        <span class="c-indicator"></span>
+        女
+    </label> 
+  </div> 
+
+  <div class="form-group">                  
+      <select class="form-control" name="major_id" formControlName="major_id">
+        <option selected="selected" value="">請選擇學系</option>
+        <option *ngFor="let major of majordatas" value="{{ major.id }}">{{ major.name }}</option>
+      </select>
+  </div>
+
+  <div *ngIf="editProfileForm.controls.major_id.hasError('required')" class="alert alert-danger">
+        請選擇你的學系
+  </div>
+
+  <div class="form-group">
+    <label for="colleage">就讀學校</label>
+    <input class="form-control" disabled="disabled" name="colleage" type="text" value="{{ userdata[0].college.data[0].name }}" id="colleage">
+  </div>
+
+  <div class="form-group">
+        <label for="birthday">生日</label>
+        <input class="form-control" name="birthday" type="date" id="birthday" formControlName="birthday">
+  </div>
+
+  <div *ngIf="editProfileForm.controls.birthday.hasError('required')" class="alert alert-danger">
+        請輸入你的生日
+  </div>
+
+  <div class="form-group">
+    <label for="username">使用者名稱</label>
+    <input class="form-control" disabled="disabled" name="username" type="text" id="username" formControlName="username" *ngIf="userdata[0].username">
+    <input class="form-control" name="username" type="text" id="username" formControlName="username" *ngIf="!userdata[0].username">
+    <p class="help-block text-danger">※注意！使用者名稱填寫完後不能再進行修改。</p>
+  </div>
+
+  <div *ngIf="!editProfileForm.controls.username.valid && !editProfileForm.controls.username.pristine" class="alert alert-danger">
+    <div *ngIf="editProfileForm.controls.username.hasError('maxlength')">
+        使用者名稱至多10個字
+    </div>
+    <div *ngIf="editProfileForm.controls.username.hasError('figureValidator')">
+        使用者名稱只能由英文或數字組成
+    </div>
+    <div *ngIf="editProfileForm.controls.username.hasError('notUnique')">
+        該使用者名稱已經存在
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="phone">電話</label>
+    <input class="form-control" name="phone" type="text" id="phone" formControlName="phone">
+  </div>
+  <div class="form-group">
+    <label for="line_username">Line ID</label>
+    <input class="form-control" name="line_username" type="text" id="line_username" formControlName="line_username">
+    <p class="help-block text-danger">※注意！請將LIne裡面設置允許利用ID加入好友。</p>
+  </div>
+  <div class="form-group">
+    <label for="telegram_username">Telegram</label>
+    <input class="form-control" name="telegram_username" type="text" id="telegram_username" formControlName="telegram_username">
+  </div>
+  <div class="form-group">
+    <label for="other_email">其他電郵</label>
+    <input class="form-control" name="other_email" id="other_email" formControlName="other_email">
+  </div>
+
+  <div *ngIf="editProfileForm.controls.other_email.hasError('emailValidator')" class="alert alert-danger">
+        其他電郵必須符合email格式
+  </div>
+
+    <input class="btn btn-secondary" type="submit" value="更改" (click)="editProfile(editProfileForm)" [disabled]="!editProfileForm.controls.lastname.valid || !editProfileForm.controls.firstname.valid || !editProfileForm.controls.major_id.valid || !editProfileForm.controls.birthday.valid || !editProfileForm.controls.username.valid || !editProfileForm.controls.other_email.valid">
+</form>

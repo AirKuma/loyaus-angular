@@ -1,0 +1,23 @@
+<div class="col-md-6 col-centered card card-block" style="background-color: #FFFFFF;">
+
+    <div class="alert alert-danger" *ngIf="message">
+        {{ message }}
+    </div>
+
+    <div role="form">
+        <div class="form-group">
+          <label for="email">電子郵件</label>
+          <input class="form-control" type="email" [(ngModel)]="data.username" name="username" required>
+          </div>
+          <div class="form-group">
+          <label for="password">密碼</label>
+          <input class="form-control" type="password" [(ngModel)]="data.password" name="password" required>
+          </div>
+
+          <input class="btn btn-secondary" type="submit" value="登入" (click)="login()" [disabled]="sandbutton==0">
+
+          <a class="facebookIcon btn btn-secondary" href="/">Facebook 帳號登入</a>
+          <a class="btn btn-link" routerLink="/password/email">忘記密碼?</a>
+    </div>
+
+</div>

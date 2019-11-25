@@ -1,0 +1,68 @@
+<h4 class="center-align" *ngIf="itemdatas==''">暫無項目</h4>
+
+<ul class="list-group">
+  <li class="list-group-item" *ngFor="let item of pagedItems">
+    <h5 class="list-group-item-heading">
+          <a routerLink="/auction/{{ type }}/item/{{ item.id }}">{{ item.name }}</a>
+    </h5>
+       <span class="currentPriceIcon" *ngIf="item.free==1"></span><font color="red" *ngIf="item.free==1">免費</font>
+       <span *ngIf="item.free==0">
+          <span class="basePriceIcon"></span>${{ item.baseprice }} 
+          <span class="currentPriceIcon"></span><font color="red"> ${{ item.price }} </font>
+          <span class="auctionNumIcon"></span> <span class="label label-pill label-warning">{{ item.bid_count }} </span>
+      </span>
+
+      <span class="pull-right-780">
+        <span *ngIf="item.disabled==1">此項目已遭封鎖</span>
+        <span *ngIf="item.disabled==0 && item.end_time <= now && item.bid_count > 0">項目成功</span>
+        <span *ngIf="item.disabled==0 && item.end_time <= now && item.bid_count == 0 && item.repost > 2">已下架</span>
+        <button *ngIf="item.disabled==0 && item.end_time <= now && item.bid_count == 0 && item.repost <= 2" data-toggle="modal" [attr.data-target]="target(item.id)" data-whatever="@mdo" type="button" class="btn btn-secondary refreshIcon">重發項目</button>
+        <span *ngIf="item.disabled==0 && item.end_time > now" attr.data-countdown="{{ item.end_time }}"></span>
+      </span>
+
+      <!--Repost modal-->
+  <div class="modal fade" id="repostItemModal-{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="repostItemModal" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+          </button>
+          <h4 class="modal-title" id="repostItemModal">重發 {{ item.name }}</h4>
+        </div>
+          <div class="modal-body">
+             <h6>至多可以重發三次，你還可以重發{{ 3-item.repost }}次，確定要重發該項目？</h6>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+              <input class="btn btn-danger" type="submit" value="確定" (click)="itemRepost(item.id)" data-dismiss="modal">
+            </div> 
+        </div>
+       </div> 
+      </div>
+    </div>
+
+
+
+  </li>
+</ul>
+
+<div class="center-align" *ngIf="itemdatas && itemdatas.length>pagerlimit">
+  <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
+                <!--<li [ngClass]="{disabled:pager.currentPage === 1}">
+                    <a (click)="setPage(1)">First</a>
+                </li>-->
+                <li [ngClass]="{disabled:pager.currentPage == 1}">
+                    <a (click)="setPage(pager.currentPage - 1)"> < </a>
+                </li>
+                <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage == page}">
+                    <a (click)="setPage(page)">{{page}}</a>
+                </li>
+                <li [ngClass]="{disabled:pager.currentPage == pager.totalPages}">
+                    <a (click)="setPage(pager.currentPage + 1)"> > </a>
+                </li>
+                <!--<li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                    <a (click)="setPage(pager.totalPages)">Last</a>
+                </li>-->
+  </ul>
+</div>

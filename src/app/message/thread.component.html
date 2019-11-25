@@ -1,0 +1,57 @@
+<div class="col-lg-4 message_section"> 
+      <div class="member_list">
+         <div class="new_message_head center-align">
+            通訊
+        </div> 
+            <ul class="list-unstyled chat" id="chat" on-scroll="strollBottom()" *ngIf="auth_user">
+              <h4 class="center-align nothread" *ngIf="threaddatas==''">暫無通訊</h4>
+              <div *ngFor="let threaddata of threaddatas">
+                <div *ngIf="auth_user!=threaddata['userone']['data'][0].id" (click)="postThreadRead(threaddata.id)" [style.backgroundColor]="is_read(threaddata.read_count)">
+                  <li class="left clearfix" routerLink="./{{ threaddata['userone']['data'][0].id }}" routerLinkActive="active">
+                    <span class="chat-img pull-left">
+                      <img src="{{ root }}images/default/male.png" *ngIf="!threaddata['userone']['data'][0].facebook && threaddata['userone']['data'][0].gender==1 && auth_user!=threaddata['userone']['data'][0].id" class="img-circle">
+                      <img src="{{ root }}images/default/female.png" *ngIf="!threaddata['userone']['data'][0].facebook && threaddata['userone']['data'][0].gender==0 && auth_user!=threaddata['userone']['data'][0].id" class="img-circle">
+                      <img [src]="threaddata['userone']['data'][0].facebook.avatar" *ngIf="threaddata['userone']['data'][0].facebook && auth_user!=threaddata['userone']['data'][0].id" class="img-circle">
+                    </span>
+                    <div class="chat-body clearfix">
+                      <div class="header_sec">
+                          <strong class="primary-font">
+                              <span class="chatuser" *ngIf="auth_user!=threaddata['userone']['data'][0].id">{{ threaddata['userone']['data'][0].lastname }} {{ threaddata['userone']['data'][0].firstname }}</span>
+                          </strong> 
+                          <span class="pull-right">{{ threaddata['messages']['data'][0].created_at }}</span>
+                      </div>
+                      <div class="contact_sec chatbody">
+                          {{ threaddata['messages']['data'][0].body }}
+                      </div>
+                    </div>
+                  </li>
+                </div>
+                <div *ngIf="auth_user!=threaddata['usertwo']['data'][0].id" (click)="postThreadRead(threaddata.id)" [style.backgroundColor]="is_read(threaddata.read_count)">
+                  <li class="left clearfix" routerLink="./{{ threaddata['usertwo']['data'][0].id }}" routerLinkActive="active">
+                    <span class="chat-img pull-left">
+                      <img src="{{ root }}images/default/male.png" *ngIf="!threaddata['usertwo']['data'][0].facebook && threaddata['usertwo']['data'][0].gender==1 && auth_user!=threaddata['usertwo']['data'][0].id" class="img-circle">
+                      <img src="{{ root }}images/default/female.png" *ngIf="!threaddata['usertwo']['data'][0].facebook && threaddata['usertwo']['data'][0].gender==0 && auth_user!=threaddata['usertwo']['data'][0].id" class="img-circle">
+                      <img [src]="threaddata['usertwo']['data'][0].facebook.avatar" *ngIf="threaddata['usertwo']['data'][0].facebook && auth_user!=threaddata['usertwo']['data'][0].id" class="img-circle">
+                    </span>
+                    <div class="chat-body clearfix">
+                      <div class="header_sec">
+                          <strong class="primary-font">
+                              <span class="chatuser" *ngIf="auth_user!=threaddata['usertwo']['data'][0].id">{{ threaddata['usertwo']['data'][0].lastname }} {{ threaddata['usertwo']['data'][0].firstname }}</span>
+                          </strong> 
+                          <span class="pull-right">{{ threaddata['messages']['data'][0].created_at }}</span>
+                      </div>
+                      <div class="contact_sec chatbody">
+                          {{ threaddata['messages']['data'][0].body }}
+                      </div>
+                    </div>
+                  </li>
+                </div>
+              </div>
+            </ul>
+      </div>
+</div>
+
+<div class="col-lg-8 message_section">
+     <router-outlet></router-outlet>
+  
+</div>

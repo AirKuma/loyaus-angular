@@ -1,0 +1,181 @@
+<div class="col-lg-7">
+  <div id="carousel-example-generic" class="carousel slide hidden-xs" data-ride="carousel">
+    <div class="carousel-inner">
+
+<!--<div *ngFor="let item of itemdatas; let i=index">-->
+
+  <div [ngClass]="setClasses(i)" *ngFor="let item of itemdatas; let i=index">
+    <div class="col-lg-12 itemcolum">
+      <div class="card card-colsmall">
+          <div>       
+            <div class="indeximg" *ngIf="item.nailthumb"> 
+              <img class="img-fluid " style="width: 100%;" src="{{ item.nailthumb }}" alt="Photo of sunset">
+            </div>    
+                  <a routerLink="/auction/bid/item/{{ item.id }}">
+                      <div class="thumb-cover"></div>
+                  </a>            
+              <div class="details"> 
+                  <div class="pull-right">
+                      <span class="freeIcon" *ngIf="item.free==1" ></span> <span class="newIcon" *ngIf="item.new==1"></span>
+                  </div>
+                  <div class="clearfix"></div>
+              </div>            
+          </div>
+          <div class="card-info">
+              <div class="moving">
+                      <span><a routerLink="/fju/auction/bid/{{ item.category.en_name }}" class="label label-success">{{ item.category.name }}</a></span>
+                   <a routerLink="/auction/bid/item/{{ item.id }}">
+                      <span class="itemname">{{ item.name }}</span>
+                      
+                      <p *ngIf="item.type==1">{{ item.description }}</p>
+                      <div><font size="4" color="red"><span *ngIf="item.price">NT$ {{ item.price }}</span><span *ngIf="!item.price">免費</span></font>
+                      <span *ngIf="item.free==0"><span class="auctionNumIcon"></span> <span class="label label-pill label-warning">{{ item.bid_count }}</span></span></div>
+                      <div class="favorIcon black">{{ item.favor_count }}</div>
+                      <b><div class="clockIcon black" attr.data-countdown="{{ item.end_time }}"></div></b>
+                    </a>  
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+<!--</div>-->
+
+    </div>
+  </div>
+
+  <div style="margin-top:10px;">
+            <br/><h3 style="line-height: 39px;" class="center-align">趕快加入輔大Loyaus, <br/>把自己二手品拍賣。</h3>
+        </div>
+</div>
+
+<div class="col-lg-5 card card-block search" style="padding:36px;">
+      <h4> 註冊為會員 </h4>
+
+      <form [formGroup]="registerForm" (ngSubmit)="register(registerForm)" novalidate>
+
+      <div class="form-group">
+          <input class="form-control" placeholder="學校電子郵件" name="email" type="text" id="email" formControlName="email">
+      </div>
+
+      <div *ngIf="!registerForm.controls.email.valid && !registerForm.controls.email.pristine" class="alert alert-danger">
+        <div *ngIf="registerForm.controls.email.hasError('required')">
+            請輸入你的電子郵件
+        </div>
+        <div *ngIf="registerForm.controls.email.hasError('emailValidator')">
+            請確定電子郵件格式有沒有錯誤
+        </div>
+        <div *ngIf="registerForm.controls.email.hasError('collegeEmailValidator')">
+            E-mail必須符合學校格式
+        </div>
+        <div *ngIf="registerForm.controls.email.hasError('maxlength')">
+            E-mail至多255個字
+        </div>
+        <div *ngIf="registerForm.controls.email.hasError('notUnique')">
+            此email已經註冊過
+        </div>
+      </div>
+
+      <div class="form-group">
+          <input class="form-control" placeholder="密碼" name="password" type="password" id="password" formControlName="password">
+      </div>
+
+      <div *ngIf="!registerForm.controls.password.valid && !registerForm.controls.password.pristine" class="alert alert-danger">
+        <div *ngIf="registerForm.controls.password.hasError('required')">
+            請輸入你的密碼
+        </div>
+        <div *ngIf="registerForm.controls.password.hasError('minlength')">
+            密碼至少要有6個字元
+        </div>
+      </div>
+
+      <div class="form-group">
+          <input class="form-control" placeholder="確認密碼" name="password_confirmation" type="password" id="password_confirmation" formControlName="password_confirmation">
+      </div>
+
+      <div *ngIf="!registerForm.controls.password_confirmation.valid && !registerForm.controls.password_confirmation.pristine" class="alert alert-danger">
+        <div *ngIf="registerForm.controls.password_confirmation.hasError('required')">
+            請輸入確認密碼
+        </div>
+        <div *ngIf="registerForm.controls.password_confirmation.hasError('minlength')">
+            密碼至少要有6個字元
+        </div>
+        <div *ngIf="registerForm.controls.password_confirmation.hasError('notEquivalent')">
+            請確定你的密碼相同
+        </div>
+      </div>
+
+      <div class="form-group">
+          <input class="form-control" placeholder="姓氏" name="lastname" type="text" id="lastname" formControlName="lastname">
+      </div>
+
+      <div *ngIf="!registerForm.controls.lastname.valid && !registerForm.controls.lastname.pristine" class="alert alert-danger">
+        <div *ngIf="registerForm.controls.lastname.hasError('required')">
+            請輸入你的姓氏
+        </div>
+        <div *ngIf="registerForm.controls.lastname.hasError('maxlength')">
+            姓氏至多10個字
+        </div>
+      </div>
+
+      <div class="form-group">
+          <input class="form-control" placeholder="名字" name="firstname" type="text" id="firstname" formControlName="firstname">
+      </div>
+
+      <div *ngIf="!registerForm.controls.firstname.valid && !registerForm.controls.firstname.pristine" class="alert alert-danger">
+        <div *ngIf="registerForm.controls.firstname.hasError('required')">
+            請輸入你的姓名
+        </div>
+        <div *ngIf="registerForm.controls.firstname.hasError('maxlength')">
+            姓名至多10個字
+        </div>
+      </div>
+
+      <div class="radio">
+          <label class="c-input c-radio">
+              <input name="gender" type="radio" value="1" formControlName="gender"> 
+              <span class="c-indicator"></span>男 
+          </label>
+          <label class="c-input c-radio">
+              <input name="gender" type="radio" value="0" formControlName="gender">
+              <span class="c-indicator"></span>女 
+          </label>
+      </div>
+
+      <div *ngIf="registerForm.controls.gender.hasError('required') && !registerForm.controls.gender.pristine" class="alert alert-danger">
+            請選擇你的性別
+      </div>
+
+      <div class="form-group">                  
+          <select class="form-control" name="major_id" formControlName="major_id">
+            <option selected="selected" value="">請選擇學系</option>
+            <option *ngFor="let major of majordatas" value="{{ major.id }}">{{ major.name }}</option>
+          </select>
+      </div>
+
+      <div *ngIf="registerForm.controls.major_id.hasError('required') && registerForm.controls.major_id.touched" class="alert alert-danger">
+            請選擇你的學系
+      </div>
+
+
+      <div class="form-group">
+          <input class="form-control" placeholder="生日" name="birthday" type="date" id="birthday" formControlName="birthday">
+      </div>
+
+      <div *ngIf="registerForm.controls.birthday.hasError('required') && registerForm.controls.birthday.touched" class="alert alert-danger">
+            請輸入你的生日
+      </div>
+
+      <input class="btn btn-secondary" type="submit" value="註冊" [disabled]="!registerForm.controls.lastname.valid || !registerForm.controls.firstname.valid || !registerForm.controls.email.valid || !registerForm.controls.password.valid || !registerForm.controls.password_confirmation.valid || !registerForm.controls.gender.valid || !registerForm.controls.major_id.valid || !registerForm.controls.birthday.valid || sandbutton==0">
+
+      </form>
+
+</div>
+
+<!--<script>
+
+$('#carousel-example-generic').on('slid.bs.carousel', function () {
+        $(".carousel-item.active:nth-child(" + ($(".carousel-inner .carousel-item").length -1) + ") + .carousel-item").insertBefore($(".carousel-item:first-child"));
+        $(".carousel-item.active:last-child").insertBefore($(".carousel-item:first-child"));
+    }); 
+</script>-->

@@ -1,0 +1,125 @@
+<div class="col-sm-12" *ngIf="auctionDetail">
+   <div class="card card-block" style="background-color: #FFFFFF;">
+      <div role="form">
+          <form [formGroup]="itemForm" novalidate>
+
+           <div class="modal-body">
+
+          <div class="form-group">
+              <label for="message-text" class="control-label sr-only">分類</label>
+              <select class="c-select" name="category_id" formControlName="category_id">
+                <option selected="selected" value="">刊登分類</option>
+                <option *ngFor="let category of categoryatas" value="{{ category.id }}">{{ category.name }}</option>
+              </select>            
+              
+              <label class="c-input c-checkbox" *ngIf="type=='bid'">
+                <input name="new" type="checkbox" value="1" formControlName="new">
+              <span class="c-indicator"></span>
+              全新項目
+              </label>
+
+              <label class="c-input c-checkbox" *ngIf="type=='bid'">
+                <input id="free" onclick="hide_price(this)" name="free" type="checkbox" value="1" formControlName="free" onclick="javascript: return false;">
+              <span class="c-indicator"></span>
+              免費贈送
+              </label>
+          </div>   
+
+          <div *ngIf="itemForm.controls.category_id.hasError('required') && !itemForm.controls.category_id.pristine" class="alert alert-danger">
+              請選擇分類
+          </div>
+
+          <div class="form-group">
+            <label for="message-text" class="control-label sr-only">名稱:</label>
+            <input class="form-control" placeholder="名稱，上限100個字" name="name" type="text" formControlName="name">
+          </div>
+
+          <div *ngIf="!itemForm.controls.name.valid && !itemForm.controls.name.pristine" class="alert alert-danger">
+            <div *ngIf="itemForm.controls.name.hasError('required')">
+                請輸入項目名稱
+            </div>
+            <div *ngIf="itemForm.controls.name.hasError('maxlength')">
+                名稱至多100個字
+            </div>
+          </div>
+
+          <span id="price" *ngIf="itemForm.controls.free.value==false">
+            <div class="input-group">
+              <span class="input-group-addon">$</span>
+                <input class="form-control" placeholder="價格" name="price" type="number" formControlName="price" disabled="disabled" *ngIf="auctionDetail[0].bid_count>0">
+                <input class="form-control" placeholder="價格" name="price" type="number" formControlName="price" *ngIf="auctionDetail[0].bid_count==0">
+              <span class="input-group-addon">.00</span>
+            </div>
+            <p class="help-block text-danger">※請填入底價</p>
+            <br>
+          </span>
+
+          <div *ngIf="itemForm.controls.price.hasError('notEquivalent') && !itemForm.controls.price.pristine" class="alert alert-danger">
+              請輸入價格
+          </div>
+
+        <div class="form-group">
+          <label for="message-text" class="control-label sr-only">描述:</label>
+          <textarea class="form-control" placeholder="描述 (可以標明產品原價和規格等資訊)" name="description" cols="50" rows="10" formControlName="description"></textarea>
+        </div>
+
+        <div *ngIf="itemForm.controls.description.hasError('required') && !itemForm.controls.description.pristine" class="alert alert-danger">
+              請輸入描述
+          </div>
+
+        <div class="form-group">
+              <label for="target">指定性別</label>
+              <label class="c-input c-radio">
+                <input id="all" name="target" checked="checked" type="radio" value="0" formControlName="target">
+                <span class="c-indicator"></span>
+                全部
+              </label>
+              <label class="c-input c-radio">
+                <input id="male" name="target" type="radio" value="1" formControlName="target">
+                <span class="c-indicator"></span>
+                男
+              </label>
+              <label class="c-input c-radio">
+                <input id="female" name="target" type="radio" value="2" formControlName="target">
+                <span class="c-indicator"></span>
+                女
+              </label> 
+          </div> 
+
+          <div *ngIf="itemForm.controls.target.hasError('required') && !itemForm.controls.target.pristine" class="alert alert-danger">
+              請選擇指定性別
+          </div>
+            
+        <div class="modal-footer">
+          <input class="btn btn-secondary" type="submit" value="修改" (click)="editItem()" [disabled]="!itemForm.controls.name.valid || !itemForm.controls.category_id.valid || !itemForm.controls.target.valid || !itemForm.controls.description.valid || !itemForm.controls.price.valid ">
+        </div>
+
+           
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <div class="card card-block" style="background-color: #FFFFFF;" *ngIf="imagedatas && imagedatas[0]">
+    <div *ngFor="let imgs of imagedatas">
+      <img src="{{ imgs.surl }}" class="img-responsive img-rounded" alt=""> 
+      <input class="btn btn-secondary deleteIcon editimg" type="submit" value="刪除" (click)="itemImageDestroy(imgs.id,imgs.file_name)">
+    </div>
+  </div>
+
+  <div class="card card-block" style="background-color: #FFFFFF;">
+
+      <div class="form-group">
+          圖片 <br>
+          <label class="file">
+            <input multiple="1" name="image[]" type="file" [(ngModel)]="image" (change)="_onChange($event.target.files)">
+          <span class="file-custom"></span>
+          </label>
+          <input class="btn btn-secondary" style="margin-top:11px;" type="submit" value="上傳圖片" (click)="uploadtemImage()">
+          <p class="help-block text-danger">※圖片最多只能上傳三張，可選取多張上傳，大小上限10 mb。</p>
+      </div>
+
+  </div>
+
+</div>

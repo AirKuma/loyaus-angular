@@ -1,0 +1,90 @@
+.member_list .chat-body {
+   margin-left: 60px;
+   margin-top: 0;
+   }
+   .top_nav {
+   overflow: visible;
+   }
+   .member_list .contact_sec {
+   margin-top: 3px;
+   }
+   .member_list li {
+   padding: 6px;
+   }
+   .member_list ul {
+   border: 1px solid #dddddd;
+   }
+   .chat-img img {
+   height: 34px;
+   width: 34px;
+   }
+   .member_list li {
+   border-bottom: 1px solid #dddddd;
+   padding: 6px;
+   }
+   .member_list li:last-child {
+   border-bottom:none;
+   }
+   .member_list {
+   max-height: 700px;
+   /*overflow-x: hidden;
+   overflow-y: auto;*/
+   }
+   .member_list li:hover {
+    background: #efefef none repeat scroll 0 0;
+    cursor:pointer;
+}
+
+.member_list li.active {
+    background: #efefef none repeat scroll 0 0;
+}
+ .chat-img img {
+   height: 45px;
+   width: 45px;
+}
+
+.message_section{
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.new_message_head {
+  background: #f5f3f3 none repeat scroll 0 0;
+  float: left;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 18px 10px;
+  width: 100%;
+  border: 0.5px solid #d5d5d5;
+}
+
+.chat-img{
+  margin-top:5px;
+}
+
+.chatbody{
+   white-space: nowrap; 
+    width: 80%; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+.chat{
+    max-height:570px;
+    /*min-height:200px;*/
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.nothread{
+  padding-top:50px;
+  padding-bottom:50px;
+}
+
+.chatuser{
+   white-space: nowrap; 
+    display: inline-block;
+    width: 50%;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}

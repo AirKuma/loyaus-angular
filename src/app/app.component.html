@@ -1,0 +1,95 @@
+<nav class="navbar navbar-light navbar-fixed-top" style="background-color: #fff;border-bottom: 1px solid #dbdbdb;">
+<div class="container">
+  <button class="navbar-toggler hidden-lg-up collapsed" type="button" data-toggle="collapse" data-target="#exCollapsingNavbar2">
+    &#9776;
+  </button>
+  <a class="navbar-brand" routerLink="/">Loyaus</a>
+  <div class="collapse navbar-toggleable" id="exCollapsingNavbar2">
+
+    <ul class="nav navbar-nav" *ngIf="usercolleg">
+      <li class="nav-item dropdown">
+          <a class="nav-link" routerLink="/{{ usercolleg }}/auction/bid">拍賣</a>
+      </li>
+      <li class="nav-item dropdown">
+          <a class="nav-link" routerLink="/{{ usercolleg }}/auction/seek">競投</a>
+      </li>
+    </ul>
+
+
+
+    <form class="form-inline pull-right" *ngIf="!islogin">
+    <div class="form-group">
+      <label for="email">電子郵件</label>
+      <input class="form-control" placeholder="請輸入學校電子郵件" type="email" [(ngModel)]="data.username" name="username" required>
+    </div>
+    <div class="form-group">
+      <label for="password">密碼</label>
+      <input class="form-control" placeholder="請輸入你的密碼" type="password" [(ngModel)]="data.password" name="password" required>
+
+    </div>
+      <input class="btn btn-secondary" type="submit" (click)="login()" value="登入" [disabled]="sandbutton==0">
+      <a class="facebookIcon btn btn-secondary" href="/" role="button">Facebook 帳號登入</a>
+    </form>
+
+    <ul class="nav navbar-nav pull-right" *ngIf="islogin"> 
+
+      <!--message-->
+          <span id="message_count"><span id="message_count_text" *ngIf="messagecount && messagecount>0">{{ messagecount }}</span></span>
+       
+          <a routerLink="/message"><button id="messageLink" class="messageIcon" (click)="readmessage()"></button></a>
+   <!--message-->   
+
+        <span id="notification_count"><span id="notification_count_text" *ngIf="noticount && noticount>0">{{ noticount }}</span></span>
+       
+          <button id="notificationLink" class="notificationIcon" (click)="readnotification()"></button>
+          <div id="notificationContainer">
+            <div id="notificationTitle">通知</div>
+            <div id="notificationsBody" class="notifications" on-scroll="strollBottom()">
+              <h4 class="center-align notification" *ngIf="notificationdatas==''">暫無通知</h4>
+              <div class="list-group">
+                
+                <a *ngFor="let notification of notificationdatas" [style.backgroundColor]="is_read(notification.is_read)" routerLink="{{ notification.link }}" (click)="reloadNotification()" class="list-group-item list-group-item-action">
+                  <h6 style="line-height:inherit" class="list-group-item-heading"><b><span *ngIf="notification.sender.id!=1">{{ notification.sender.lastname }} {{ notification.sender.firstname }}</span></b>
+                    {{ notification.content }}
+                  </h6>
+                  <p class="list-group-item-text">{{ notification.created_at }} </p>
+                </a>
+
+              </div>
+            </div>
+            <div id="notificationFooter" >
+                <a routerLink="/notifications" (click)="reloadNotification()" data-dismiss="modal">顯示全部</a> 
+            </div>
+          </div>  
+
+        <div class="pull-right">
+          <img src="{{ root }}images/default/male.png" *ngIf="userdata && !userdata[0].facebook  && userdata[0].gender==1"  class="img-circle special-img" style="size:30; height: 30px; float: left;margin-right:5px;">
+          <img src="{{ root }}images/default/female.png" *ngIf="userdata && !userdata[0].facebook  && userdata[0].gender==0" class="img-circle special-img" style="size:30; height: 30px; float: left;margin-right:5px;">
+          <img src="{{ userdata[0].facebook.avatar }}" *ngIf="userdata && userdata[0].facebook" class="img-circle special-img" style="size:30; height: 30px; float: left;margin-right:5px;">
+          <li class="dropdown nav-item">
+          <a  href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span *ngIf="userdata">{{ userdata[0].lastname }} {{ userdata[0].firstname }}</span><span class="caret"></span></a>
+            <ul class="dropdown-menu" style="left:-30px;">
+              <li><a class="dropdown-item" routerLink="/account/profile">個人資料</a></li>
+              <li><a class="dropdown-item" routerLink="/auction/bid/admin">我的項目</a></li>
+              <div class="dropdown-divider"></div>
+              <li><a class="dropdown-item" (click)="logout()">登出</a></li>
+
+            </ul>
+          </li>
+        </div>
+    </ul>
+  </div>
+</div>
+</nav>
+
+<br><br><br>
+<div class="container">
+	<div class="row">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+
+<a href="https://www.facebook.com/messages/t/100012727386797" class="bugreport bugIcon" title="錯誤回報" target="_blank"></a>
+
+

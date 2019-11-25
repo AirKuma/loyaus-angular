@@ -1,0 +1,18 @@
+<div class="col-lg-3">
+    <div class="list-group">
+      <li class="list-group-item">
+          <img src="{{ root }}images/default/male.png" *ngIf="userdata && !userdata[0].facebook  && userdata[0].gender==1"  width="100px" height="100px" class="img-circle center-block" alt="Photo taken on the trek to Rob Roy Glacier">
+          <img src="{{ root }}images/default/female.png" *ngIf="userdata && !userdata[0].facebook  && userdata[0].gender==0" width="100px" height="100px" class="img-circle center-block" alt="Photo taken on the trek to Rob Roy Glacier">
+          <img src="{{ userdata[0].facebook.avatar }}" *ngIf="userdata && userdata[0].facebook" width="100px" height="100px" class="img-circle center-block" alt="Photo taken on the trek to Rob Roy Glacier">
+      </li>
+      <a routerLink="/account/profile" routerLinkActive="active" class="list-group-item ">個人資料</a>
+      <a routerLink="/account/password" routerLinkActive="active" class="list-group-item ">個人帳號</a>
+      <a routerLink="/account/fb" routerLinkActive="active" class="list-group-item">社群設置</a>
+    </div>        
+</div>
+
+<div class="col-lg-9 search">
+  <div class="card card-block" style="background-color: #FFFFFF;">
+      <router-outlet></router-outlet>
+  </div>
+</div>

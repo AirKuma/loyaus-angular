@@ -1,0 +1,56 @@
+<div *ngIf="error==0">
+  <div class="new_message_head center-align">
+    <span *ngIf="contactData">{{ contactData[0].lastname }} {{ contactData[0].firstname }}</span>
+    <span *ngIf="!contactData">無選擇對象</span>
+  </div>
+
+  <div *ngIf="selectedId">
+    <div class="chat_area" id="chatmessage" on-scroll="ToTop()">
+      <!--<h4 class="center-align nomessage" *ngIf="messages==''">暫無訊息</h4>-->
+      <ul class="list-unstyled">
+        <div *ngFor="let message of messages">
+          <li class="left clearfix" *ngIf="message.user.data[0].id!=auth_user">
+              <span class="chat-img1 pull-left">
+                <!--<img src="https://lh6.googleusercontent.com/-y-MY2satK-E/AAAAAAAAAAI/AAAAAAAAAJU/ER_hFddBheQ/photo.jpg" alt="User Avatar" class="img-circle">-->
+                <img src="{{ root }}images/default/male.png" *ngIf="!message.user.data[0].facebook  && message.user.data[0].gender==1"  alt="User Avatar" class="img-circle">
+                <img src="{{ root }}images/default/female.png" *ngIf="!message.user.data[0].facebook  && message.user.data[0].gender==0" alt="User Avatar" class="img-circle">
+                <img src="{{ message.user.data[0].facebook.avatar }}" *ngIf="message.user.data[0].facebook" alt="User Avatar" class="img-circle">
+              </span>
+              <div class="chat-body1 clearfix">
+                  <p>{{ message.body }}</p>
+                  <div class="chat_time pull-right">{{ message.created_at }}</div>
+              </div>
+          </li>
+
+          <li class="left clearfix admin_chat" *ngIf="message.user.data[0].id==auth_user">
+              <span class="chat-img1 pull-right">
+                <img src="{{ root }}images/default/male.png" *ngIf="!message.user.data[0].facebook  && message.user.data[0].gender==1"  alt="User Avatar" class="img-circle">
+                <img src="{{ root }}images/default/female.png" *ngIf="!message.user.data[0].facebook  && message.user.data[0].gender==0" alt="User Avatar" class="img-circle">
+                <img src="{{ message.user.data[0].facebook.avatar }}" *ngIf="message.user.data[0].facebook" alt="User Avatar" class="img-circle">
+              </span>
+              <div class="chat-body1 clearfix">
+                  <p class="white-space-pre-line">{{ message.body }}</p>
+                  <div class="chat_time pull-left">{{ message.created_at }}</div>
+              </div>
+          </li>
+        </div>
+      </ul>
+    </div><!--chat_area-->
+
+    <div class="message_write">
+        <div class="form-group">
+          <textarea class="form-control" name="body" cols="5" rows="3" [(ngModel)]="body" required="required" placeholder="輸入訊息..."></textarea>
+        </div>
+        <div class="clearfix"></div>
+        <div class="chat_bottom">
+          <!--<a href="#" class="pull-right btn btn-success">
+          Send</a>-->
+          <button class="btn btn-secondary" type="submit" (click)="createMessage()" [disabled]="sandbutton==0">送出</button>
+       </div>
+    </div>
+
+  </div>
+
+  <h1 class="center-align notselect" *ngIf="!selectedId">請選擇通訊對象</h1>
+
+</div>

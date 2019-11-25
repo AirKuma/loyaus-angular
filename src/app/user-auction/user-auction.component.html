@@ -1,0 +1,10 @@
+<div class="col-lg-3">
+  <div class="list-group">
+      <a routerLink="./bid/admin" routerLinkActive="active" class="list-group-item">我的拍賣<span class="label label-pill label-warning pull-right" *ngIf="myitem">{{ myitem[0] }}</span></a>
+      <a routerLink="./seek/admin" routerLinkActive="active" class="list-group-item">我的競投<span class="label label-pill label-warning pull-right" *ngIf="myitem">{{ myitem[1] }}</span></a>
+    </div>
+</div>
+
+<div class="col-lg-9 search">
+  <router-outlet></router-outlet>
+</div>

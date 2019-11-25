@@ -1,0 +1,60 @@
+<div class="col-md-12 card-columns">
+    
+<h4 class="center-align" *ngIf="itemdatas==''">暫無項目</h4>
+
+<div class="itemcol" *ngFor="let item of pagedItems">
+    
+    <div class="card card-small">
+        <div>           
+            <img *ngIf="item.nailthumb" class="img-fluid " style="width: 100%;" src="{{ item.nailthumb }}" alt="Photo of sunset">
+                <a routerLink="/auction/{{ type }}/item/{{ item.id }}">
+                    <div class="thumb-cover"></div>
+                </a>            
+            <div class="details"> 
+                <div class="pull-right">
+                    <span class="freeIcon" *ngIf="item.free==1" ></span> <span class="newIcon" *ngIf="item.new==1"></span>
+                </div>
+                <div class="clearfix"></div>
+            </div>            
+        </div>
+        <div class="card-info">
+            <div class="moving">
+                    <span><a routerLink="/{{ college }}/auction/{{ type }}/{{ item.category.en_name }}" class="label label-success">{{ item.category.name }}</a></span>
+                 <a routerLink="/auction/{{ type }}/item/{{ item.id }}">
+                    <span class="itemname">{{ item.name }}</span>
+
+                    <p class="white-space-pre-line itembody" *ngIf="item.type==1">{{ item.description }}</p>
+                    <div><font size="4" color="red"><span *ngIf="item.price">NT$ {{ item.price }}</span><span *ngIf="!item.price">免費</span></font>
+                    <span *ngIf="item.free==0"><span class="auctionNumIcon"></span> <span class="label label-pill label-warning">{{ item.bid_count }}</span></span></div>
+                    <div class="favorIcon black">{{ item.favor_count }}</div>
+                    <!--<b><div class="clockIcon black">{{ item.end_time  }}</div></b>-->
+                    <b><div class="clockIcon black" attr.data-countdown="{{ item.end_time  }}"></div></b>
+                </a>    
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<div class="center-align col-lg-12" *ngIf="itemdatas && itemdatas.length>pagerlimit">
+  <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
+                <!--<li [ngClass]="{disabled:pager.currentPage === 1}">
+                    <a (click)="setPage(1)">First</a>
+                </li>-->
+                <li [ngClass]="{disabled:pager.currentPage == 1}">
+                    <a (click)="setPage(pager.currentPage - 1)"> < </a>
+                </li>
+                <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage == page}">
+                    <a (click)="setPage(page)">{{page}}</a>
+                </li>
+                <li [ngClass]="{disabled:pager.currentPage == pager.totalPages}">
+                    <a (click)="setPage(pager.currentPage + 1)"> > </a>
+                </li>
+                <!--<li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                    <a (click)="setPage(pager.totalPages)">Last</a>
+                </li>-->
+  </ul>
+</div>
+
+

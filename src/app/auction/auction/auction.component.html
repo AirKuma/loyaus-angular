@@ -1,0 +1,42 @@
+<div class="col-lg-3">
+  <div class="list-group">
+      <a routerLink="./" (click)="gocategory('')" routerLinkActive="active" class="list-group-item">全部<span class="label label-pill label-warning pull-right" *ngIf="categorycount && categoryatas">{{ categorycount[categoryatas.length] }}</span></a>
+
+        <a *ngFor="let category of categoryatas; let i=index" routerLinkActive="active" routerLink="./{{ category.en_name }}" (click)="gocategory(category.en_name)" class="list-group-item">{{ category.name }}<span class="label label-pill label-warning pull-right" *ngIf="categorycount">{{ categorycount[i] }}</span></a>
+
+      <a *ngIf="type=='bid'" routerLinkActive="active" routerLink="./free" (click)="gocategory('free')" class="list-group-item">免費贈送<span class="label label-pill label-warning pull-right" *ngIf="categorycount && categoryatas"> {{ categorycount[categoryatas.length+2] }} </span></a>
+     <a routerLinkActive="active" routerLink="./my" (click)="gocategory('my')" class="list-group-item">出價項目<span class="label label-pill label-warning pull-right" *ngIf="categorycount && categoryatas"> {{ categorycount[categoryatas.length+1] }} </span></a>
+
+   </div>   
+</div>
+
+<div class="col-lg-9">
+  <div class="col-md-12 search">  
+    <a class="btn btn-secondary itemPlusIcon" routerLink="/auction/{{ type }}/create"><span *ngIf="type=='bid'">新增拍賣</span><span *ngIf="type=='seek'">新增競投</span></a>
+    
+    <div class="form-group dropdown pull-right">                  
+          <select [ngModel]="college" class="form-control" name="college" (ngModelChange)="searchCollege($event)">
+            
+            <option value="123">台灣大學</option>
+            <option value="fju">輔仁大學</option>
+          </select>
+      </div>
+
+      <!--<div class="dropdown pull-right">  
+             <button type="button" class="btn dropdown-toggle" id="rank" 
+                data-toggle="dropdown">                 
+               <span *ngIf="college">{{ college }}</span>
+                <span class="caret"></span>
+             </button>
+             <ul class="dropdown-menu" role="menu" aria-labelledby="rank">
+                <li role="presentation">
+                  <a class="dropdown-item" (click)="searchCollege('123','台灣大學')">台灣大學</a>
+                   <a class="dropdown-item" (click)="searchCollege('fju','輔仁大學')">輔仁大學</a>
+                </li>
+             </ul>
+        </div>-->
+  </div>
+
+    <router-outlet></router-outlet>
+
+</div>

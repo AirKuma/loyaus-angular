@@ -1,0 +1,13 @@
+<div class="col-lg-12">
+    <h5>你的通知</h5>
+    <hr>
+    <ul class="list-group">
+       <a *ngFor="let notification of notificationdatas" [style.backgroundColor]="is_read(notification.is_read)" routerLink="{{ notification.link }}" class="list-group-item list-group-item-action">
+          <h6 style="line-height:inherit" class="list-group-item-heading"><b><span *ngIf="notification.sender.id!=1">{{ notification.sender.lastname }} {{ notification.sender.firstname }}</span></b>
+            {{ notification.content }}
+          </h6>
+          <p class="list-group-item-text">{{ notification.created_at }} </p>
+      </a>
+    </ul>
+    <h4 class="center-align" *ngIf="notificationdatas==''">暫無通知</h4>
+</div>

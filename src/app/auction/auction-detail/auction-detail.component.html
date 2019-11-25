@@ -1,0 +1,572 @@
+<div *ngIf="auctionDetail && biddatas && error!=1">
+
+  <div class="col-lg-12 card" style="background-color: #FFFFFF;" *ngIf="auctionDetail[0].disabled==1">
+      <h4 class="card-block">此項目已遭封鎖</h4>
+  </div>
+
+<div *ngIf="auctionDetail[0].disabled==0">
+
+  <div *ngIf="islogin && actived==1">
+    <div class="col-lg-9">
+        <div class="card" style="background-color: #FFFFFF;">    
+              <h4 class="card-title card-block" style="margin-bottom:0px;"><span class="label label-danger"><span *ngIf="auctionDetail[0].type==0">拍賣</span><span *ngIf="auctionDetail[0].type==1">競投</span></span> 
+              <span *ngIf="auctionDetail[0].free==1" class="freeIcon"></span> <span *ngIf="auctionDetail[0].new==1" class="newIcon"></span> {{ auctionDetail[0].name }}</h4>
+
+              <img src="{{ imagedatas[0].weburl }}" class="img-rounded" style="max-width:100%;" alt="" *ngIf="imagedatas && imagedatas[0] && !imagedatas[1]">
+
+              <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" *ngIf="imagedatas && imagedatas[1]">
+                  <ol class="carousel-indicators">
+                    <li *ngFor="let imgs of imagedatas; let i=index" data-target="#carousel-example-generic" data-slide-to="i" [ngClass]="setClasses(i)"></li>
+                  </ol>
+                  <div class="carousel-inner" role="listbox">
+                    <div *ngFor="let imgs of imagedatas; let i=index" class="itemimg carousel-item" [ngClass]="setClasses(i)">
+                          <img id="centerimg" src="{{ imgs.weburl }}" class="img-rounded" style="max-height:100%;" alt="">
+                    </div>
+                  </div>
+                  <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                    <span class="icon-prev" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                  <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                    <span class="icon-next" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                  </a>
+              </div>
+
+              <div class="card-text card-block">
+                分類：{{ auctionDetail[0].category.name }}<button data-toggle="modal" data-target="#reportItemModal" data-whatever="@mdo" type="button" class="pull-right reportIcon" title="舉報"></button><br />
+                <span class="white-space-pre-line">{{ auctionDetail[0].description }}</span>
+              </div>
+              <div class="card-block">
+                <button *ngIf="userId!=auctionDetail[0].user_id" type="button" class="btn btn-secondary messageIcon" (click)="postmessage()">發訊息給賣家</button>
+                <button type="button" [ngClass]="setFavorClass()" (click)="postfavor()">喜歡 {{ auctionDetail[0].favor_count }}</button>
+                <!--<button *ngIf="isfavor==1" type="button" class="btn btn-secondary calfavorIcon" (click)="postfavor()">喜歡</button>-->
+              </div>
+        </div>
+
+        <div class="card card-block" style="background-color: #FFFFFF;">
+          <form>
+              <div class="form-group">
+                <textarea class="form-control" name="content" cols="5" rows="3" [(ngModel)]="content" required="required"></textarea>
+              </div>
+              <button class="btn btn-secondary" type="submit" (click)="itemComment()" [disabled]="sandbutton==0">留言</button>
+          </form>
+        </div>
+
+        <div class="card card-block" style="background-color: #FFFFFF;" *ngIf="commentdatas!=''">
+            <h4 class="card-title">留言 <span class="label label-pill label-warning">{{ commentdatas.length }}</span></h4>
+            <p class="card-text">
+            <span *ngFor="let comment of commentpagedItems">
+
+                <div class="btn-group pull-right" [ngClass]="setClassescomment(i)" *ngIf="islogin">
+                  <button type="button" class="btn btn-sm btn-secondary dropdown-toggle fix-height" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="sr-only">Toggle Dropdown</span>
+                  </button>
+                  <div class="dropdown-menu" style="left:-117px;">
+                    <a class="dropdown-item" class="dropdown-item" data-toggle="modal" [attr.data-target]="target('#reportCommentModal-',comment.id)" data-whatever="@mdo" (click)="mo()">舉報</a>
+                    <a *ngIf="comment.status!=1 && comment.user.id==userId" class="dropdown-item" data-toggle="modal" [attr.data-target]="target('#editCommentModal-',comment.id)" data-whatever="@mdo" (click)="commentedit(comment.content)">編輯</a>
+                    <a *ngIf="comment.status!=1 && comment.user.id==userId" class="dropdown-item" data-toggle="modal" [attr.data-target]="target('#deleteCommentModal-',comment.id)" data-whatever="@mdo">刪除</a>
+                  </div>
+                </div>
+
+                <div class="media">
+                  <div class="media-left">
+                  <img *ngIf="(!comment.facebook || comment.user.id==auctionDetail[0].user_id) && comment.user.gender==1" src="{{ root }}images/default/male.png" style="height: 40px;" class="media-object img-circle" alt="Photo of Pukeko in New Zealand">
+                  <img *ngIf="(!comment.facebook || comment.user.id==auctionDetail[0].user_id) && comment.user.gender==0" src="{{ root }}images/default/female.png" style="height: 40px;" class="media-object img-circle" alt="Photo of Pukeko in New Zealand">
+                  <img *ngIf="comment.facebook && comment.user.id!=auctionDetail[0].user_id" src="{{ comment.facebook.avatar }}" style="height: 40px;" class="media-object img-circle" alt="Photo of Pukeko in New Zealand">
+                  </div>
+                  <div class="media-body">
+                    <h4 class="media-heading">
+                      <span *ngIf="comment.user.id!=auctionDetail[0].user_id">{{ comment.user.lastname }} {{ comment.user.firstname }}</span>
+                      <span *ngIf="comment.user.id==auctionDetail[0].user_id">賣家</span>
+                    </h4>
+                    <p>
+                      <span *ngIf="comment.status==1">此留言已遭封鎖</span>
+                      <span class="white-space-pre-line" *ngIf="comment.status==0">{{ comment.content }}</span>
+                    <br />
+                    <font color="#7e7e7e">{{ comment.created_at }}</font></p>
+                      
+                  </div>
+                </div>
+
+                <!--檢舉modal-->
+                <div class="modal fade" id="reportCommentModal-{{comment.id}}" tabindex="-1" role="dialog" aria-labelledby="reportCommentModal-comment.id" aria-hidden="true">
+                  <div class="modal-dialog modal-md" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                          <span class="sr-only">Close</span>
+                        </button>
+                        <h4 class="modal-title" id="reportCommentModal">檢舉留言</h4>
+                      </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                              <label for="message-text" class="control-label sr-only">原因:</label>
+                              <textarea class="form-control" placeholder="原因 (可不填)" name="commentreport" cols="50" rows="10" [(ngModel)]="commentreport"></textarea>
+
+                              <div class="modal-footer">
+                                <input class="btn btn-secondary" type="submit" value="檢舉" (click)="commentReport(comment.id)" data-dismiss="modal">
+                              </div>
+
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--編輯modal-->
+                <div class="modal fade" id="editCommentModal-{{comment.id}}" tabindex="-1" role="dialog" aria-labelledby="editCommentModal" aria-hidden="true">
+                  <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                          <span class="sr-only">Close</span>
+                        </button>
+                        <h4 class="modal-title" id="editCommentModal">編輯留言</h4>
+                      </div>
+                        <div class="modal-body">
+                          <form>
+                            <div class="form-group">
+                              <textarea class="form-control"  name="updatecontent" cols="5" rows="3" [(ngModel)]="commentupdate">{{ comment.content }}</textarea>
+                                  
+                              <div class="modal-footer">
+                                <input class="btn btn-secondary" type="submit" value="儲存" (click)="commentUpdate(comment.id)" data-dismiss="modal">
+                              </div>
+                              
+                            </div>
+                          </form>
+                      </div>
+                                        
+                    </div>
+                  </div>
+                </div>
+                <!--刪除modal-->
+                  <div class="modal fade" id="deleteCommentModal-{{comment.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteCommentModal" aria-hidden="true">
+                    <div class="modal-dialog modal-sm" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            <span class="sr-only">Close</span>
+                          </button>
+                          <h4 class="modal-title" id="deleteCommentModal-{{comment.id}}">刪除留言</h4>
+                        </div>
+                    <div class="modal-body">
+                      <h6>確定要刪除該留言？</h6>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-danger" (click)="commentDestroy(comment.id)" data-dismiss="modal">確定</button>
+                          </div>
+
+                      </div> 
+                      </div>
+                    </div>
+                  </div>
+
+            </span>
+            </p>
+        </div>
+
+        <div class="center-align" *ngIf="commentdatas && commentdatas.length>commentpagerlimit">
+          <ul *ngIf="commentpager.pages && commentpager.pages.length" class="pagination">
+                        <!--<li [ngClass]="{disabled:pager.currentPage === 1}">
+                            <a (click)="setPage(1)">First</a>
+                        </li>-->
+                        <li [ngClass]="{disabled:commentpager.currentPage === 1}">
+                            <a (click)="setcommentPage(commentpager.currentPage - 1)"> < </a>
+                        </li>
+                        <li *ngFor="let page of commentpager.pages" [ngClass]="{active:commentpager.currentPage === page}">
+                            <a (click)="setcommentPage(page)">{{page}}</a>
+                        </li>
+                        <li [ngClass]="{disabled:commentpager.currentPage === commentpager.totalPages}">
+                            <a (click)="setcommentPage(commentpager.currentPage + 1)"> > </a>
+                        </li>
+                        <!--<li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                            <a (click)="setPage(pager.totalPages)">Last</a>
+                        </li>-->
+          </ul>
+        </div>
+
+    </div>
+
+    <div class="col-lg-3 col-sm-offset-0">
+
+      <div class="card card-block" style="background-color: #FFFFFF;" *ngIf="( auctionDetail[0].end_time > now || biddatas=='' ) && userId==auctionDetail[0].user_id ">
+            <a routerLink="/auction/{{ type }}/edit/{{ auctionDetail[0].id }}" class="btn btn-secondary editIcon">修改</a>
+            <button data-toggle="modal" data-target="#deleteItemModal" data-whatever="@mdo" type="button" class="btn btn-secondary deleteIcon">刪除</button>
+        </div>
+
+        <div class="card card-block" style="background-color: #FFFFFF;" *ngIf="auctionDetail[0].end_time > now">
+          <h1 class="card-title" ><span *ngIf="auctionDetail[0].price">$ {{ auctionDetail[0].price }}</span><span *ngIf="!auctionDetail[0].price">免費</span></h1>
+          <span class="card-text">
+
+              <span *ngIf="userId!=auctionDetail[0].user_id && auctionDetail[0].free==0">
+                <div *ngIf="priceCheck() && price != ''" class="alert alert-danger">
+                      {{ priceError }}
+                </div>
+                <form>
+                  <div class="form-group">
+                      <input class="form-control" placeholder="價格" name="price" type="number" [(ngModel)]="price" required>
+                  </div>
+                  <div class="form-group">
+                      <button type="submit" class="btn btn-secondary bidIcon" (click)="itemBid()" [disabled]="priceCheck() || sandbutton==0">我要出價</button>
+                  </div>
+                </form>
+              </span>
+
+              <div class="form-group text-center" *ngIf="userId!=auctionDetail[0].user_id && auctionDetail[0].free==1">
+                <button type="submit" class="btn btn-secondary btn-block wantIcon" (click)="itemFree()" [disabled]="sandbutton==0">我想要</button>
+              </div>
+
+              <b><div attr.data-countdown="{{ auctionDetail[0].end_time  }}"></div></b>
+          </span>
+        </div>
+
+        <div class="card card-block" style="background-color: #FFFFFF;" *ngIf="auctionDetail[0].end_time <= now && biddatas && contactData">
+  
+                <div *ngIf="biddatas[0]">
+                    <div *ngIf="userId==auctionDetail[0].user_id">
+                        <h5><span *ngIf="auctionDetail[0].type==0">拍賣</span><span *ngIf="auctionDetail[0].type==1">競投</span>已經結束，此項目由<b>{{ biddatas[0].lastname }} {{ biddatas[0].firstname }}</b><span *ngIf="auctionDetail[0].free==1">獲得</span><span *ngIf="auctionDetail[0].free==0">得標</span>！</h5>
+                        買家聯絡資訊如下，請找時間與買家聯繫。<br>
+
+                        <div class="center-align" *ngIf="biddatas && biddatas!=''">
+                          <div *ngIf="biddatas[0].facebook">
+                              Facebook：<br>
+                              <a href="https://www.facebook.com/{{ biddatas[0].facebook.facebook_id }}" target="_blank">
+                                {{ biddatas[0].facebook.name}}<br> 
+                                <img src="{{ biddatas[0].facebook.avatar }}" alt="facebook_avatar" class="img-reponsive img-rounded"><br>
+                              </a><br>
+                          </div>
+                          <button data-toggle="modal" data-target="#contectModal" data-whatever="@mdo" type="button" class="btn btn-warning btn-sm">更多聯絡資訊</button>
+
+                          <button type="button" class="btn btn-secondary messageIcon btn-sm endmessage" (click)="sendMessage()">發訊息給買家</button>
+                        </div>
+
+                    </div>
+
+                    <div *ngIf="userId==biddatas[0].id">
+
+                        <h5><span *ngIf="auctionDetail[0].type==0">拍賣</span><span *ngIf="auctionDetail[0].type==1">競投</span>已經結束，恭喜<span *ngIf="auctionDetail[0].free==1">獲得</span><span *ngIf="auctionDetail[0].free==0">標得</span><b>{{ auctionDetail[0].name }}</b>！</h5>
+                        賣家聯絡資訊如下，請找時間與賣家聯繫。<br>
+
+                        <div class="center-align" *ngIf="contactData">
+                          <div *ngIf="contactData[0].facebook">
+                              Facebook：<br>
+                              <a href="https://www.facebook.com/{{ contactData[0].facebook.facebook_id }}" target="_blank">
+                                {{ contactData[0].facebook.name}}<br> 
+                                <img src="{{ contactData[0].facebook.avatar }}" alt="facebook_avatar" class="img-reponsive img-rounded"><br>
+                              </a><br>
+                          </div>
+                          <button data-toggle="modal" data-target="#contectModal" data-whatever="@mdo" type="button" class="btn btn-warning btn-sm">更多聯絡資訊</button>
+                        
+                          <button type="button" class="btn btn-secondary messageIcon btn-sm endmessage" (click)="sendMessage()">發訊息給賣家</button>
+                        </div>
+
+                    </div>
+
+                    <div *ngIf="userId!=biddatas[0].id && userId!=auctionDetail[0].user_id">
+                        <h5><span *ngIf="auctionDetail[0].type==0">拍賣</span><span *ngIf="auctionDetail[0].type==1">競投</span>已經結束，此項目由<b>{{ biddatas[0].lastname }} {{ biddatas[0].firstname }}</b><span *ngIf="auctionDetail[0].free==1">獲得</span><span *ngIf="auctionDetail[0].free==0">得標</span>！</h5>
+                    </div>
+
+                </div>
+
+                <div *ngIf="biddatas==''">
+                    <h5><span *ngIf="auctionDetail[0].type==0">拍賣</span><span *ngIf="auctionDetail[0].type==1">競投</span>已經結束。</h5> 
+                </div>
+        </div>
+
+        <div class="card card-block" style="background-color: #FFFFFF;" *ngIf="auctionDetail[0].free==0">
+            <h5 class="card-title">出價記錄 <span class="label label-pill label-warning">{{ auctionDetail[0].bid_count }}</span></h5>
+            <span class="card-text">
+                <div class="media" *ngFor="let bid of bidpagedItems; let i=index">
+                    <div class="media-left">
+                    <img style="height: 30px;" class="img-circle special-img media-object" src="{{ root }}images/default/male.png" *ngIf="!bid.facebook && bid.gender==1">
+                    <img style="height: 30px;" class="img-circle special-img media-object" src="{{ root }}images/default/female.png" *ngIf="!bid.facebook && bid.gender==0">
+                    <img style="height: 30px;" class="img-circle special-img media-object" src="{{ bid.facebook.avatar }}" *ngIf="bid.facebook">
+                    </div>
+                    <div class="media-body">
+                      <h4 class="media-heading">${{ bid.price }}</h4>
+                      <p>{{ bid.major }}</p>
+                    </div>
+                </div>
+            </span>
+        </div>
+
+    </div>
+
+
+
+
+
+    <!--檢舉modal-->
+      <div class="modal fade" id="reportItemModal" tabindex="-1" role="dialog" aria-labelledby="reportItemModal" aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title" id="exampleModalLabel">檢舉項目</h4>
+            </div>
+              <div class="modal-body">
+
+                <div class="form-group">
+                  <label for="message-text" class="control-label sr-only">原因:</label>
+                  <textarea class="form-control" placeholder="原因 (可不填)" name="content" cols="50" rows="10" [(ngModel)]="report"></textarea>
+
+                  <div class="modal-footer">
+                    <input class="btn btn-secondary" type="submit" value="檢舉" (click)="itemReport()" data-dismiss="modal">
+                  </div>
+
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      <!--刪除modal-->
+    <div class="modal fade" id="deleteItemModal" tabindex="-1" role="dialog" aria-labelledby="deleteItemModal" aria-hidden="true">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              <span class="sr-only">Close</span>
+            </button>
+            <h4 class="modal-title" id="exampleModalLabel">刪除項目</h4>
+          </div>
+      <div class="modal-body">
+        <h6>確定要刪除該項目？</h6>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+              <input class="btn btn-danger" type="submit" value="確定" (click)="iteDestroy()" data-dismiss="modal">
+            </div>
+
+        </div> 
+        </div>
+      </div>
+    </div>
+
+      <!--聯絡訊息modal-->
+    <div class="modal fade" id="contectModal" tabindex="-1" role="dialog" aria-labelledby="contectModal" aria-hidden="true">
+      <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              <span class="sr-only">Close</span>
+            </button>
+            <h4 class="modal-title" id="contectModal">聯絡訊息</h4>
+          </div>
+      <div class="modal-body">
+          <div *ngIf="biddatas && contactData && biddatas!=''">
+            <div *ngIf="userId==auctionDetail[0].user_id">
+                <div *ngIf="biddatas[0].line_username">
+                    <b>Line:</b><br>
+                    <img src="http://chart.apis.google.com/chart?cht=qr&amp;chl=http://line.me/ti/p/~{{ biddatas[0].line_username }}&amp;chs=200x200" alt="" class="center-block"><br>
+                </div>
+                <div *ngIf="biddatas[0].telegram_username">
+                    <b>Telegram：</b>{{ biddatas[0].telegram_username}}<br>
+                </div>
+                <div *ngIf="biddatas[0].phone">
+                    <b>連絡電話：</b>{{ biddatas[0].phone}}<br>
+                </div>
+                    <b>學校信箱：</b>{{ biddatas[0].email }}<br>
+                <div *ngIf="biddatas[0].other_email">
+                    <b>其他信箱：</b>{{ biddatas[0].other_email }}<br>
+                </div>
+            </div>
+
+            <div *ngIf="userId==biddatas[0].id">
+                <div *ngIf="contactData[0].line_username">
+                    <b>Line:</b><br>
+                    <img src="http://chart.apis.google.com/chart?cht=qr&amp;chl=http://line.me/ti/p/~{{ contactData[0].line_username }}&amp;chs=200x200" alt="" class="center-block"><br>
+                </div>
+                <div *ngIf="contactData[0].telegram_username">
+                    <b>Telegram：</b>{{ contactData[0].telegram_username}}<br>
+                </div>
+                <div *ngIf="contactData[0].phone">
+                    <b>連絡電話：</b>{{ contactData[0].phone}}<br>
+                </div>
+                    <b>學校信箱：</b>{{ contactData[0].email }}<br>
+                <div *ngIf="contactData[0].other_email">
+                    <b>其他信箱：</b>{{ contactData[0].other_email }}<br>
+                </div>
+            </div>
+
+            </div> 
+        </div> 
+        </div>
+      </div>
+	
+	</div>
+  </div>
+	
+  <div *ngIf="!islogin || actived==0">
+       <div class="col-lg-6 col-centered">
+            <div class="card-header">
+              <a routerLink="/">Layous</a>
+            </div>
+       
+          <div class="card card-block" style="background-color: #FFFFFF;">
+              <h4 class="card-title"><span class="label label-danger"><span *ngIf="auctionDetail[0].type==0">拍賣</span><span *ngIf="auctionDetail[0].type==1">競投</span></span> 
+                  <span *ngIf="auctionDetail[0].free==1" class="freeIcon"></span> <span *ngIf="auctionDetail[0].new==1" class="newIcon"></span> {{ auctionDetail[0].name }}</h4>
+
+                <div class="card-text">
+                  <img src="{{ imagedatas[0].weburl }}" class="img-rounded" style="max-width:100%;" alt="" *ngIf="imagedatas && imagedatas[0] && !imagedatas[1]">
+
+                  <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" *ngIf="imagedatas && imagedatas[1]">
+                      <ol class="carousel-indicators">
+                        <li *ngFor="let imgs of imagedatas; let i=index" data-target="#carousel-example-generic" data-slide-to="i" [ngClass]="setClasses(i)"></li>
+                      </ol>
+                      <div class="carousel-inner" role="listbox">
+                        <div *ngFor="let imgs of imagedatas; let i=index" class="itemimgs carousel-item" [ngClass]="setClasses(i)">
+                              <img id="centerimg" src="{{ imgs.weburl }}" class="img-rounded" style="max-height:100%;" alt="">
+                        </div>
+                      </div>
+                      <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                        <span class="icon-prev" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                      </a>
+                      <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                        <span class="icon-next" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                      </a>
+                  </div>
+                </div>
+                <br />
+                <div class="card-text row">
+                  <div class="col-lg-12">
+                      <div [ngClass]="setClasseshow(auctionDetail[0].free)">
+                          分類：{{ auctionDetail[0].category.name }}<br />
+                          <span class="block-480">開始時間：</span>{{ auctionDetail[0].start_time }}<br />
+                          <span class="block-480">剩餘時間：</span><span attr.data-countdown="{{ auctionDetail[0].end_time  }}"></span>
+                      </div>
+
+                      <div class="col-lg-4" *ngIf="auctionDetail[0].free==0">
+                        底價：NT${{ auctionDetail[0].price }}
+                      </div>
+                  </div>
+                  <div class="col-lg-12">
+                    <div class="text-center">
+                        <span *ngIf="auctionDetail[0].free==0">目前標價：<span class="item_price">NT${{ auctionDetail[0].price }}</span></span>
+                        <span *ngIf="auctionDetail[0].free==1" class="item_price">免費</span>
+                      </div>
+                      <span class="white-space-pre-line">{{ auctionDetail[0].description }}</span><br />
+                  </div>
+                </div>
+
+                <div *ngIf="auctionDetail[0].end_time > now" class="text-center">
+                    <a routerLink="/" [ngClass]="setPriceIconClasses(auctionDetail[0].free)"><span *ngIf="auctionDetail[0].free==0">我要出價</span><span *ngIf="auctionDetail[0].free==1">我想要</span></a>
+                </div>
+                <div *ngIf="auctionDetail[0].end_time <= now" class="text-center">
+                  <br/>
+                    <div *ngIf="biddatas[0]">
+                        <h5><span *ngIf="auctionDetail[0].type==0">拍賣</span><span *ngIf="auctionDetail[0].type==1">競投</span>已經結束，此項目由<b>{{ biddatas[0].lastname }} {{ biddatas[0].firstname }}</b><span *ngIf="auctionDetail[0].free==1">獲得</span><span *ngIf="auctionDetail[0].free==0">得標</span>！</h5>
+                    </div>
+                    <div *ngIf="biddatas==''">
+                      <h5><span *ngIf="auctionDetail[0].type==0">拍賣</span><span *ngIf="auctionDetail[0].type==1">競投</span>已經結束。</h5> 
+                  </div>
+                </div>
+
+          </div>
+
+          <div class="card card-block" style="background-color: #FFFFFF;" *ngIf="auctionDetail[0].free==0 && auctionDetail[0].bid_count>0">
+            <h4 class="card-title">出價記錄 <span class="label label-pill label-warning">{{ auctionDetail[0].bid_count }}</span></h4>
+            <span class="card-text">
+                <div class="media" *ngFor="let bid of bidpagedItems; let i=index">
+                    <div class="media-left">
+                    <img style="height: 30px;" class="img-circle special-img media-object" src="{{ root }}images/default/male.png" *ngIf="!bid.facebook && bid.gender==1">
+                    <img style="height: 30px;" class="img-circle special-img media-object" src="{{ root }}images/default/female.png" *ngIf="!bid.facebook && bid.gender==0">
+                    <img style="height: 30px;" class="img-circle special-img media-object" src="{{ bid.facebook.avatar }}" *ngIf="bid.facebook">
+                    </div>
+                    <div class="media-body">
+                      <h4 class="media-heading">${{ bid.price }}</h4>
+                      <p>{{ bid.major }}</p>
+                    </div>
+                </div>
+            </span>
+        </div>
+
+        <div class="center-align smallpage" *ngIf="biddatas && biddatas.length>bidpagerlimit">
+          <ul *ngIf="bidpager.pages && bidpager.pages.length" class="pagination">
+                        <!--<li [ngClass]="{disabled:pager.currentPage === 1}">
+                            <a (click)="setPage(1)">First</a>
+                        </li>-->
+                        <li [ngClass]="{disabled:bidpager.currentPage === 1}">
+                            <a (click)="setbidPage(bidpager.currentPage - 1)"> < </a>
+                        </li>
+                        <li *ngFor="let page of bidpager.pages" [ngClass]="{active:bidpager.currentPage === page}">
+                            <a (click)="setbidPage(page)">{{page}}</a>
+                        </li>
+                        <li [ngClass]="{disabled:bidpager.currentPage === bidpager.totalPages}">
+                            <a (click)="setbidPage(bidpager.currentPage + 1)"> > </a>
+                        </li>
+                        <!--<li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                            <a (click)="setPage(pager.totalPages)">Last</a>
+                        </li>-->
+          </ul>
+        </div>
+
+        <div class="card card-block" style="background-color: #FFFFFF;" *ngIf="commentdatas!=''">
+            <h4 class="card-title">留言 <span class="label label-pill label-warning">{{ auctionDetail[0].comment_count }}</span></h4>
+            <span *ngFor="let comment of commentpagedItems">
+              <div class="card-text">
+                  <div class="media">
+                    <div class="media-left">
+                    <img *ngIf="(!comment.facebook || comment.user.id==auctionDetail[0].user_id) && comment.user.gender==1" src="{{ root }}images/default/male.png" style="height: 40px;" class="media-object img-circle" alt="Photo of Pukeko in New Zealand">
+                    <img *ngIf="(!comment.facebook || comment.user.id==auctionDetail[0].user_id) && comment.user.gender==0" src="{{ root }}images/default/female.png" style="height: 40px;" class="media-object img-circle" alt="Photo of Pukeko in New Zealand">
+                    <img *ngIf="comment.facebook && comment.user.id!=auctionDetail[0].user_id" src="{{ comment.facebook.avatar }}" style="height: 40px;" class="media-object img-circle" alt="Photo of Pukeko in New Zealand">
+                    </div>
+                    <div class="media-body">
+                      <h4 class="media-heading">
+                        <span *ngIf="comment.user.id!=auctionDetail[0].user_id">{{ comment.user.lastname }} {{ comment.user.firstname }}</span>
+                        <span *ngIf="comment.user.id==auctionDetail[0].user_id">賣家</span>
+                      </h4>
+                      <p>
+                        <span *ngIf="comment.status==1">此留言已遭封鎖</span>
+                        <span class="white-space-pre-line" *ngIf="comment.status==0">{{ comment.content }}</span>
+                      <br />
+                      <font color="#7e7e7e">{{ comment.created_at }}</font></p>
+                        
+                    </div>
+                  </div>
+              </div>
+            </span>
+        </div>
+
+        <div class="center-align smallpage" *ngIf="commentdatas && commentdatas.length>commentpagerlimit">
+          <ul *ngIf="commentpager.pages && commentpager.pages.length" class="pagination">
+                        <!--<li [ngClass]="{disabled:pager.currentPage === 1}">
+                            <a (click)="setPage(1)">First</a>
+                        </li>-->
+                        <li [ngClass]="{disabled:commentpager.currentPage === 1}">
+                            <a (click)="setcommentPage(commentpager.currentPage - 1)"> < </a>
+                        </li>
+                        <li *ngFor="let page of commentpager.pages" [ngClass]="{active:commentpager.currentPage === page}">
+                            <a (click)="setcommentPage(page)">{{page}}</a>
+                        </li>
+                        <li [ngClass]="{disabled:commentpager.currentPage === commentpager.totalPages}">
+                            <a (click)="setcommentPage(commentpager.currentPage + 1)"> > </a>
+                        </li>
+                        <!--<li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                            <a (click)="setPage(pager.totalPages)">Last</a>
+                        </li>-->
+          </ul>
+        </div>
+
+      </div>
+  </div>   
+
+</div>
+
+</div>
+
+
+<div class="container" *ngIf="error==1">
+    <div class="content">
+        <div class="title text-center">此項目不見了！</div>
+    </div>
+</div>

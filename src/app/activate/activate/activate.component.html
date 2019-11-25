@@ -1,0 +1,21 @@
+<div class="col-sm-12">
+      <div class="alert alert-danger">
+      檢查您的電郵信箱，點擊通知書上的 "確認帳號鏈結" 以啟動您的帳號。<br>
+      如收件箱中找不到激活郵件，可查看一下垃圾郵件或訂閱郵件等文件夾。<br>
+      或在以下地方輸入電郵信箱以重發激活鏈結。
+      </div>
+      <div class="center-align">
+      <div role="form" class="form-inline">
+      <form>
+          <div class="form-group">
+            <label for="email">電子郵件</label>
+            <input class="form-control" placeholder="請輸入學校電子郵件" name="email" type="email" id="email" [(ngModel)]="email" required>
+          </div> 
+          <div class="form-group">
+            <input class="btn btn-secondary" type="submit" value="重發激活鏈結" (click)="ActivateEmail()">
+          </div>
+      </form>  
+      </div>
+      </div>
+      <br>
+</div>
